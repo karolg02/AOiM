@@ -1,7 +1,7 @@
 # Triangle Area and Perimeter Calculator
 
 ## Opis
-Projekt ten to prosty kalkulator do obliczania pola powierzchni oraz obwodu trójkątów. Użytkownik może wprowadzić długości boków trójkąta, a program obliczy i wyświetli zarówno pole powierzchni, jak i obwód. Program także weryfikuje, czy podane długości boków mogą tworzyć trójkąt.
+Projekt ten to prosty kalkulator do obliczania pola powierzchni oraz obwodu trójkątów, kwadratów, kół oraz graniastosłupów. Użytkownik wprowadza długości boków trójkąta, a program obliczy i wyświetli zarówno pole powierzchni, jak i obwód lub objętość (graniastosłup). Program także weryfikuje, czy podane długości boków mogą tworzyć trójkąt.
 
 ## Instalacja
 1. Sklonuj to repozytorium:
