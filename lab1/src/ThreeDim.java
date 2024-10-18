@@ -12,33 +12,40 @@ public class ThreeDim extends Figure implements Printing{
     Circle circle;
     Square square;
 
+    String baseOfFigure;
+
     ThreeDim(Figure figure,double h){
         if(figure instanceof Triangle){
             this.a = ((Triangle) figure).a;
             this.b = ((Triangle) figure).b;
             this.c = ((Triangle) figure).c;
             triangle = (Triangle) figure;
+            baseOfFigure = "Triangle";
         }else if(figure instanceof Square){
             this.a = ((Square) figure).a;
             square = (Square) figure;
+            baseOfFigure = "Square";
         }else if(figure instanceof Circle){
             this.radius = ((Circle) figure).radius;
             circle = (Circle) figure;
+            baseOfFigure = "Circle";
         }
         this.h = h;
     }
 
+    //in that case that's capacity
     @Override
     double calculateArea() {
         if(triangle != null){
-            return triangle.calculateArea();
+            return triangle.calculateArea()*h;
         }else if(square != null){
-            return square.calculateArea();
+            return square.calculateArea()*h;
         }else{
-            return circle.calculateArea();
+            return circle.calculateArea()*h;
         }
     }
 
+    //in that case that's area
     @Override
     double calculatePerimeter() {
         if(triangle != null){
@@ -52,6 +59,9 @@ public class ThreeDim extends Figure implements Printing{
 
     @Override
     public void print() {
-
+        System.out.println();
+        System.out.println("Prism of the base of " + baseOfFigure);
+        System.out.println("Capacity of given prism: " +calculateArea());
+        System.out.println("Perimeter of given prism: " +calculatePerimeter());
     }
 }
