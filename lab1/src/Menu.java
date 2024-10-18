@@ -34,6 +34,11 @@ public class Menu{
             case 5:
                     System.out.println("Closing...");
                     System.exit(0);
+            default:
+                System.out.println("Invalid option!");
+                System.out.println("\nPress ENTER to continue...");
+                scanner.nextLine();
+                scanner.nextLine();
         }
     }
 

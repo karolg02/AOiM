@@ -16,7 +16,7 @@ public class Triangle extends Figure implements Printing {
         }
     }
 
-    private boolean isValidTriangle(double a, double b, double c) {
+    public boolean isValidTriangle(double a, double b, double c) {
         return (a + b > c) && (a + c > b) && (b + c > a);
     }
 
