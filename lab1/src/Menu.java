@@ -1,3 +1,8 @@
+import Figures.Circle;
+import Figures.Square;
+import Figures.ThreeDim;
+import Figures.Triangle;
+
 import java.util.Scanner;
 
 public class Menu{

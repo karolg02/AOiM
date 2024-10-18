@@ -1,8 +1,10 @@
-public class Square extends Figure implements Printing{
+package Figures;
+
+public class Square extends Figure implements Printing {
 
     double a;
 
-    Square(double a) {
+    public Square(double a) {
         this.a = a;
     }
 
@@ -18,7 +20,7 @@ public class Square extends Figure implements Printing{
 
     @Override
     public void print() {
-        System.out.println("Square: ");
+        System.out.println("Figures.Square: ");
         System.out.println("Length a = "+a);
         System.out.println("The area of the square is " + calculateArea());
         System.out.println("The perimeter of the square is " + calculatePerimeter());

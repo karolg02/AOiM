@@ -1,6 +1,6 @@
-import java.awt.*;
+package Figures;
 
-public class ThreeDim extends Figure implements Printing{
+public class ThreeDim extends Figure implements Printing {
 
     double a;
     double b;
@@ -14,7 +14,7 @@ public class ThreeDim extends Figure implements Printing{
 
     String baseOfFigure;
 
-    ThreeDim(Figure figure,double h){
+    public ThreeDim(Figure figure, double h){
         if(figure instanceof Triangle){
             this.a = ((Triangle) figure).a;
             this.b = ((Triangle) figure).b;

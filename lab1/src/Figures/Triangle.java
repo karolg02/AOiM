@@ -1,10 +1,12 @@
+package Figures;
+
 public class Triangle extends Figure implements Printing {
 
     double a;
     double b;
     double c;
 
-    Triangle(double a, double b, double c) {
+    public Triangle(double a, double b, double c) {
         if (isValidTriangle(a, b, c)) {
             this.a = a;
             this.b = b;

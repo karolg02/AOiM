@@ -1,8 +1,10 @@
-public class Circle extends Figure implements Printing{
+package Figures;
+
+public class Circle extends Figure implements Printing {
 
     double radius;
 
-    Circle(double radius) {
+    public Circle(double radius) {
         this.radius = radius;
     }
 
