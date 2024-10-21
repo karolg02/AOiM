@@ -1,5 +1,7 @@
 package Figures;
 
+import java.util.Objects;
+
 public class ThreeDim extends Figure implements Printing {
 
     double a;
@@ -59,7 +61,7 @@ public class ThreeDim extends Figure implements Printing {
 
     @Override
     public void print() {
-        if(baseOfFigure=="Triangle"){
+        if(Objects.equals(baseOfFigure, "Triangle")){
             if(triangle.isValidTriangle(triangle.a, triangle.b, triangle.c)){
                 System.out.println();
                 System.out.println("Prism of the base of " + baseOfFigure);
