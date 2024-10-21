@@ -59,13 +59,20 @@ public class ThreeDim extends Figure implements Printing {
 
     @Override
     public void print() {
-        if(triangle.isValidTriangle(triangle.a, triangle.b, triangle.c)){
+        if(baseOfFigure=="Triangle"){
+            if(triangle.isValidTriangle(triangle.a, triangle.b, triangle.c)){
+                System.out.println();
+                System.out.println("Prism of the base of " + baseOfFigure);
+                System.out.println("Capacity of given prism: " +calculateArea());
+                System.out.println("Perimeter of given prism: " +calculatePerimeter());
+            }else{
+                System.out.println("Cannot form the prism");
+            }
+        }else{
             System.out.println();
             System.out.println("Prism of the base of " + baseOfFigure);
             System.out.println("Capacity of given prism: " +calculateArea());
             System.out.println("Perimeter of given prism: " +calculatePerimeter());
-        }else{
-            System.out.println("Cannot form the prism");
         }
     }
 }
