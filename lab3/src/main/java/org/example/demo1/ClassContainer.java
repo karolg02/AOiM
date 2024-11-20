@@ -1,16 +1,16 @@
 package org.example.demo1;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ClassContainer {
-    private Map<String, ClassTeacher> teacherGroups;
+    public Map<String, ClassTeacher> teacherGroups;
     private static ClassContainer instance;
 
     private ClassContainer() {
-        teacherGroups = new HashMap<>(); // Inicjalizacja mapy w konstruktorze
+        teacherGroups = new HashMap<>();
     }
 
     public static ClassContainer getInstance() {
@@ -36,50 +36,15 @@ public class ClassContainer {
 
 
     public List<ClassTeacher> getClassTeachers() {
-        return teacherGroups.values().stream().collect(Collectors.toList());
+        return new ArrayList<>(teacherGroups.values());
     }
 
-    public void addClass(String groupName, double Capacity){
+    public void addClass(String groupName, int Capacity){
         if(teacherGroups.containsKey(groupName)){
             System.out.println("Grupa o takiej nazwie juz istnieje!");
         }else{
-            teacherGroups.put(groupName, new ClassTeacher(groupName,10));
+            teacherGroups.put(groupName, new ClassTeacher(groupName,Capacity));
             System.out.println("Dodano nowa grupe: " + groupName);
         }
     }
-
-    public void removeClass(String groupName){
-        if(teacherGroups.containsKey(groupName)){
-            System.out.println("Usunieto grupe: " + groupName);
-            teacherGroups.remove(groupName);
-        }else{
-            System.out.println("Nie ma takiej grupy!");
-        }
-    }
-
-    public List<String> findEmpty(){
-        List<String> empty = new ArrayList<>();
-        for(Map.Entry<String, ClassTeacher> entry : teacherGroups.entrySet()){
-            if(entry.getValue().teachers.isEmpty()){
-                empty.add(entry.getKey());
-            }
-        }
-        return empty;
-    }
-
-    public void summary(){
-        for(Map.Entry<String, ClassTeacher> entry : teacherGroups.entrySet()){
-            ClassTeacher teacher = entry.getValue();
-            int size = teacher.teachers.size();
-            double percent = ((double) size/ teacher.capacity)*100;
-            System.out.println(teacher.groupName + ": procentowe zapełnienie: " + percent + "%");
-        }
-    }
-
-    public List<ClassTeacher> searchGroupsByName(String searchText) {
-        return teacherGroups.values().stream()
-                .filter(classTeacher -> classTeacher.groupName.toLowerCase().contains(searchText.toLowerCase()))
-                .collect(Collectors.toList());
-    }
-
 }

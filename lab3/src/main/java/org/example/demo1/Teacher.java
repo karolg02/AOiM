@@ -12,14 +12,6 @@ public class Teacher implements Comparable<Teacher> {
         StanNauczyciela = stanNauczyciela;
         this.rokUrodzenia = rokUrodzenia;
         this.wynagrodzenie = wynagrodzenie;
-
-    }
-    public void Printing(){
-        System.out.println("Imie: " + imie);
-        System.out.println("Nazwisko: " + nazwisko);
-        System.out.println("Stan nauczyciela: " + StanNauczyciela);
-        System.out.println("Rok urodzenia: " + rokUrodzenia);
-        System.out.println("Wynagrodzenie: " + wynagrodzenie);
     }
 
     @Override

@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="700.0" minWidth="1280.0" prefHeight="587.0" prefWidth="896.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo1.Scene1Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="700.0" minWidth="1200.0" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo1.Scene1Controller">
    <children>
-      <TableView fx:id="groupTab" layoutY="7.0" maxWidth="1280.0" minHeight="600.0" minWidth="1200.0" prefHeight="635.0" prefWidth="1280.0" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="7.0">
+      <TableView fx:id="groupTab" maxWidth="1280.0" minHeight="600.0" minWidth="1200.0" prefHeight="642.0" prefWidth="1280.0" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columns>
           <TableColumn fx:id="groupName" prefWidth="124.0" text="nazwa grupy" />
           <TableColumn fx:id="groupCapacity" prefWidth="158.0" text="pojemność grupy" />
             <TableColumn fx:id="groupFilled" prefWidth="184.0" text="zapełnienie grupy" />
         </columns>
       </TableView>
-      <TextField fx:id="searchField" layoutX="121.0" layoutY="653.0" />
-      <Text layoutX="21.0" layoutY="670.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wyszukiwanie" />
+      <TextField fx:id="searchField" layoutX="108.0" layoutY="653.0" prefHeight="35.0" prefWidth="149.0" />
+      <Text layoutX="22.0" layoutY="675.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wyszukiwanie" />
+      <Button fx:id="addGroupButton" layoutX="561.0" layoutY="653.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0" text="Dodaj" />
+      <Text layoutX="326.0" layoutY="675.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dodaj grupę" />
+      <TextField fx:id="addGroupField" layoutX="402.0" layoutY="653.0" prefHeight="35.0" prefWidth="149.0" />
+      <Button fx:id="deleteGroupButton" layoutX="1067.0" layoutY="653.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="119.0" text="Usuń zaznaczone" />
    </children>
 </AnchorPane>
