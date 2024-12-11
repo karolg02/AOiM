@@ -28,6 +28,10 @@ public class Teacher implements Comparable<Teacher> {
         this.wynagrodzenie = wynagrodzenie;
     }
 
+    public Teacher() {
+
+    }
+
     public int getId() {
         return id;
     }

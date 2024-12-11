@@ -1,32 +1,36 @@
 package org.example.demo1;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 
-import java.util.ArrayList;
-import java.util.List;
 @Entity
-@Table(name = "classTeacher")
-public class ClassTeacher{
+@Table(name = "class_teacher")
+public class ClassTeacher {
     @Id
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "group_name", unique = true, nullable = false)
     private String groupName;
-    private List<Teacher> teachers;
-    private final int capacity;
+
+    @Column(name = "capacity", nullable = false)
+    private int capacity;
+
+    public ClassTeacher() {
+    }
 
     public ClassTeacher(String groupName, int capacity) {
         this.groupName = groupName;
         this.capacity = capacity;
-        this.teachers = new ArrayList<>(capacity);
     }
-    
-    public long getId() {
+
+    // Gettery i settery
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -38,24 +42,23 @@ public class ClassTeacher{
         this.groupName = groupName;
     }
 
-    public List<Teacher> getTeachers() {
-        return teachers;
-    }
-
-    public void setTeachers(List<Teacher> teachers) {
-        this.teachers = teachers;
-    }
-
-    public SimpleStringProperty nameProperty(){
-        return new SimpleStringProperty(groupName);
-    }
-
-    public double getFilledPercentage() {
-        return ((double) teachers.size() / capacity) * 100;
-    }
-
     public int getCapacity() {
         return capacity;
     }
 
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public double getFilledPercentage() {
+        return capacity * 1.0 / capacity;
+    }
+
+    public ObservableValue<String> nameProperty() {
+        return new SimpleStringProperty(groupName);
+    }
+
+    public Teacher getTeachers() {
+        return getTeachers();
+    }
 }

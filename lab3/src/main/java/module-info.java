@@ -5,6 +5,7 @@ module org.example.demo1 {
     requires org.hibernate.orm.core;
     requires jakarta.persistence;
     requires java.naming;
+    requires java.desktop;
 
 
     opens org.example.demo1 to javafx.fxml,org.hibernate.orm.core;

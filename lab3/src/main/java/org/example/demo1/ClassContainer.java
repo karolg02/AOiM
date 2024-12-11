@@ -1,50 +1,51 @@
 package org.example.demo1;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import java.util.List;
-import java.util.Map;
 
 public class ClassContainer {
-    public Map<String, ClassTeacher> teacherGroups;
-    private static ClassContainer instance;
+    public void addClass(String groupName, int capacity) {
+        try (Session session = Connector.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
 
-    private ClassContainer() {
-        teacherGroups = new HashMap<>();
-    }
+            ClassTeacher existingGroup = session.createQuery(
+                            "FROM ClassTeacher WHERE groupName = :groupName", ClassTeacher.class)
+                    .setParameter("groupName", groupName)
+                    .uniqueResult();
 
-    public static ClassContainer getInstance() {
-        if (instance == null) {
-            instance = new ClassContainer();
-
-            instance.addClass("Maruderzy", 5);
-            instance.addClass("Muszkieterzy", 5);
-
-            Teacher teacher1 = new Teacher("Karol", "Glanowski", TeacherCondition.OBECNY, 2002, 7003);
-            Teacher teacher2 = new Teacher("Tomasz", "Gacek", TeacherCondition.OBECNY, 2002, 7000);
-            Teacher teacher3 = new Teacher("Mateusz", "Jasek", TeacherCondition.OBECNY, 2002, 7002);
-
-            ClassTeacher classTeacher = instance.teacherGroups.get("Maruderzy");
-            if (classTeacher != null) {
-                classTeacher.addTeacher(teacher1);
-                classTeacher.addTeacher(teacher2);
-                classTeacher.addTeacher(teacher3);
+            if (existingGroup != null) {
+                System.out.println("Grupa o takiej nazwie już istnieje!");
+            } else {
+                ClassTeacher newGroup = new ClassTeacher(groupName, capacity);
+                session.persist(newGroup);
+                transaction.commit();
+                System.out.println("Dodano nową grupę: " + groupName);
             }
         }
-        return instance;
     }
-
 
     public List<ClassTeacher> getClassTeachers() {
-        return new ArrayList<>(teacherGroups.values());
+        try (Session session = Connector.getSessionFactory().openSession()) {
+            return session.createQuery("FROM ClassTeacher", ClassTeacher.class).list();
+        }
     }
 
-    public void addClass(String groupName, int Capacity){
-        if(teacherGroups.containsKey(groupName)){
-            System.out.println("Grupa o takiej nazwie juz istnieje!");
-        }else{
-            teacherGroups.put(groupName, new ClassTeacher(groupName,Capacity));
-            System.out.println("Dodano nowa grupe: " + groupName);
+    public void deleteClass(String groupName) {
+        try (Session session = Connector.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            ClassTeacher group = session.createQuery(
+                            "FROM ClassTeacher WHERE groupName = :groupName", ClassTeacher.class)
+                    .setParameter("groupName", groupName)
+                    .uniqueResult();
+
+            if (group != null) {
+                session.remove(group);
+                transaction.commit();
+                System.out.println("Usunięto grupę: " + groupName);
+            }
         }
     }
 }

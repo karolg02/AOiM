@@ -11,7 +11,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Connector connector = new Connector();
-        EntityPerson person = new EntityPerson();
+        //EntityPerson person = new EntityPerson();
 
 
         FXMLLoader loader1 = new FXMLLoader(getClass().getResource("Scene1.fxml"));

@@ -5,18 +5,41 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import java.util.List;
-
 public class Connector {
+    private static Connector instance;
+    private static SessionFactory sessionFactory;
 
-    private SessionFactory sessionFactory;
-
-    public Connector() {
-        // Inicjalizacja fabryki sesji Hibernate z pliku konfiguracyjnego
-        sessionFactory = new Configuration()
-                .configure("hibernate.cfg.xml") // Plik konfiguracyjny Hibernate
-                .addAnnotatedClass(EntityPerson.class) // Dodanie encji
-                .buildSessionFactory();
+    Connector() {
+        try {
+            // Inicjalizacja fabryki sesji Hibernate z pliku konfiguracyjnego
+            sessionFactory = new Configuration()
+                    .configure("hibernate.cfg.xml") // Plik konfiguracyjny Hibernate
+                    .addAnnotatedClass(Teacher.class)
+                    .addAnnotatedClass(ClassTeacher.class) // Dodanie encji
+                    .addAnnotatedClass(ClassContainer.class)
+                    .buildSessionFactory();
+        } catch (Exception e) {
+            System.err.println("Initial SessionFactory creation failed." + e);
+            throw new ExceptionInInitializerError(e);
+        }
     }
 
+    public static Connector getInstance() {
+        if (instance == null) {
+            synchronized (Connector.class) {
+                if (instance == null) {
+                    instance = new Connector();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public static SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public void shutdown() {
+        sessionFactory.close();
+    }
 }

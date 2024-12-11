@@ -9,7 +9,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
+import java.awt.desktop.ScreenSleepEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -34,7 +37,7 @@ public class Scene1Controller implements Initializable {
     @FXML
     private Button deleteGroupButton;
 
-    ClassContainer classContainer = ClassContainer.getInstance();
+    private final ClassContainer classContainer = new ClassContainer();
 
     public void setStageAndScenes(Stage stage, Scene scene) {
         this.scene = scene;
@@ -46,24 +49,23 @@ public class Scene1Controller implements Initializable {
         });
     }
 
-
     private void openGroupDetails(ClassTeacher group) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Scene2.fxml"));
             Parent root = loader.load();
 
-            Scene2Controller scene2Controller = loader.getController();
-            scene2Controller.setGroup(group);
+            /*Scene2Controller scene2Controller = loader.getController();
+            scene2Controller.setGroup(group);*/
 
-            Scene scene2 = new Scene(root);
+            /*Scene scene2 = new Scene(root);
             Stage currentStage = (Stage) groupTab.getScene().getWindow();
 
             scene2Controller.setStageAndScene1(currentStage, groupTab.getScene());
 
             currentStage.setScene(scene2);
-            currentStage.show();
+            currentStage.show();*/
         } catch (IOException e) {
-            System.out.println("elo");
+            System.out.println("Error loading Scene2.fxml: " + e.getMessage());
         }
     }
 
@@ -75,34 +77,47 @@ public class Scene1Controller implements Initializable {
         alert.showAndWait();
     }
 
-
     private void addNewGroup(String groupName, ObservableList<ClassTeacher> data) {
-        if (!classContainer.teacherGroups.containsKey(groupName)) {
-            classContainer.addClass(groupName, 10);
+        try (Session session = Connector.getInstance().getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
 
-            ClassTeacher newGroup = classContainer.teacherGroups.get(groupName);
+            ClassTeacher existingGroup = session.createQuery(
+                            "FROM ClassTeacher WHERE groupName = :groupName", ClassTeacher.class)
+                    .setParameter("groupName", groupName)
+                    .uniqueResult();
 
-            if (newGroup != null) {
-                data.add(newGroup);
+            if (existingGroup == null) {
+                classContainer.addClass(groupName, 10);
+
+                //ClassTeacher newGroup = classContainer.setGroupName(groupName);
+               /* if (newGroup != null) {
+                    data.add(newGroup);
+                }*/
+                transaction.commit();
+                addGroupField.clear();
+                groupTab.refresh();
+            } else {
+                showAlert();
             }
-
-            addGroupField.clear();
-            groupTab.refresh();
-        } else {
-            showAlert();
+        } catch (Exception e) {
+            System.err.println("Błąd podczas dodawania grupy: " + e.getMessage());
         }
     }
 
     private void deleteGroup(ClassTeacher selectedGroup, ObservableList<ClassTeacher> data) {
-        if (selectedGroup != null) {
-            classContainer.teacherGroups.remove(selectedGroup.getGroupName());
+        try (Session session = Connector.getInstance().getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
 
-            data.remove(selectedGroup);
-
-            groupTab.refresh();
+            if (selectedGroup != null) {
+                session.remove(selectedGroup);
+                transaction.commit();
+                data.remove(selectedGroup);
+                groupTab.refresh();
+            }
+        } catch (Exception e) {
+            System.err.println("Błąd podczas usuwania grupy: " + e.getMessage());
         }
     }
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -121,14 +136,11 @@ public class Scene1Controller implements Initializable {
             }
             groupTab.refresh();
             searchField.clear();
-            filterTable("", data);
         });
 
         deleteGroupButton.setOnAction(event -> {
             ClassTeacher selectedGroup = groupTab.getSelectionModel().getSelectedItem();
             deleteGroup(selectedGroup, data);
-            searchField.clear();
-            filterTable("", data);
         });
 
         groupTab.setOnMouseClicked(event -> {
@@ -140,7 +152,6 @@ public class Scene1Controller implements Initializable {
             }
         });
     }
-
 
     private void filterTable(String searchText, ObservableList<ClassTeacher> data) {
         ObservableList<ClassTeacher> filteredData = FXCollections.observableArrayList();
@@ -157,4 +168,3 @@ public class Scene1Controller implements Initializable {
         groupTab.setItems(filteredData);
     }
 }
-

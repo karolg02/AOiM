@@ -10,6 +10,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 
 public class Scene2Controller {
     private Scene scene1;
@@ -47,6 +52,11 @@ public class Scene2Controller {
     private TextField searchTeacherField;
 
     private ClassTeacher group;
+    private SessionFactory sessionFactory;
+
+    public Scene2Controller() {
+        sessionFactory = new Configuration().configure().buildSessionFactory();
+    }
 
     public void setStageAndScene1(Stage stage, Scene scene1) {
         this.stage = stage;
@@ -71,7 +81,12 @@ public class Scene2Controller {
 
     public void setGroup(ClassTeacher group) {
         this.group = group;
-        teacherList = FXCollections.observableArrayList(group.teachers);
+        teacherList = FXCollections.observableArrayList(group.getTeachers());
+
+        try (Session session = sessionFactory.openSession()) {
+            teacherList.setAll(session.createQuery("from Teacher", Teacher.class).list());
+        }
+
         teacherTable.setItems(teacherList);
 
         teacherTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -80,6 +95,7 @@ public class Scene2Controller {
             }
         });
     }
+
     private void populateForm(Teacher teacher) {
         selectedTeacher = teacher;
         firstNameField.setText(teacher.getImie());
@@ -105,23 +121,26 @@ public class Scene2Controller {
             birthYear = Integer.parseInt(birthYearField.getText());
             salary = Double.parseDouble(salaryField.getText());
         } catch (NumberFormatException e) {
+            showError("Niepoprawne dane liczbowe.");
             return;
         }
 
-        Teacher existingTeacher = findTeacher(firstName, lastName, birthYear);
-        if (existingTeacher != null) {
-            showAlert("Nauczyciel o tych danych już istnieje w tej grupie.");
-            return;
+        Teacher newTeacher = new Teacher(firstName, lastName, TeacherCondition.valueOf(condition.toUpperCase()), birthYear, salary);
+
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.save(newTeacher);
+            transaction.commit();
+            // Add teacher to the ObservableList
+            teacherList.add(newTeacher);
+            //group.getTeachers().add(newTeacher); // Ensure that the group list is updated
         }
 
-        Teacher newTeacher = new Teacher(firstName, lastName,TeacherCondition.valueOf(condition.toUpperCase()), birthYear, salary);
-        teacherList.add(newTeacher);
-        group.teachers.add(newTeacher);
         clearForm();
     }
 
     private Teacher findTeacher(String firstName, String lastName, int birthYear) {
-        for (Teacher teacher : group.teachers) {
+        for (Teacher teacher : teacherList) {
             if (teacher.getImie().equals(firstName) && teacher.getNazwisko().equals(lastName) && teacher.getRokUrodzenia() == birthYear) {
                 return teacher;
             }
@@ -132,15 +151,14 @@ public class Scene2Controller {
     private void filterTeachers(String searchText) {
         ObservableList<Teacher> filteredTeachers = FXCollections.observableArrayList();
 
-        for (Teacher teacher : group.teachers) {
-            if (teacher.getImie().toLowerCase().contains(searchText.toLowerCase())) {
-                filteredTeachers.add(teacher);
-            }
+        try (Session session = sessionFactory.openSession()) {
+            Query<Teacher> query = session.createQuery("from Teacher where lower(imie) like :searchText", Teacher.class);
+            query.setParameter("searchText", "%" + searchText.toLowerCase() + "%");
+            filteredTeachers.setAll(query.list());
         }
 
         teacherTable.setItems(filteredTeachers);
     }
-
 
     private void updateTeacher() {
         if (selectedTeacher != null) {
@@ -156,6 +174,12 @@ public class Scene2Controller {
                 return;
             }
 
+            try (Session session = sessionFactory.openSession()) {
+                Transaction transaction = session.beginTransaction();
+                session.update(selectedTeacher);
+                transaction.commit();
+            }
+
             teacherTable.refresh();
             clearForm();
         } else {
@@ -167,7 +191,13 @@ public class Scene2Controller {
     private void deleteSelectedTeacher() {
         Teacher selectedTeacher = teacherTable.getSelectionModel().getSelectedItem();
         if (selectedTeacher != null) {
-            group.teachers.remove(selectedTeacher);
+            teacherList.remove(selectedTeacher);
+
+            try (Session session = sessionFactory.openSession()) {
+                Transaction transaction = session.beginTransaction();
+                session.delete(selectedTeacher);
+                transaction.commit();
+            }
 
             teacherTable.getItems().remove(selectedTeacher);
             teacherTable.refresh();
@@ -175,8 +205,6 @@ public class Scene2Controller {
             showAlert("Nie wybrano nauczyciela do usunięcia.");
         }
     }
-
-
 
     private void clearForm() {
         firstNameField.clear();
@@ -203,7 +231,6 @@ public class Scene2Controller {
         alert.showAndWait();
     }
 
-
     @FXML
     public void initialize() {
         conditionField.setItems(FXCollections.observableArrayList(
@@ -220,10 +247,6 @@ public class Scene2Controller {
         teacherCondition.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTeacherCondition().name()));
         teacherBirthYear.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRokUrodzenia()).asObject());
         teacherSalary.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getWynagrodzenie()).asObject());
-
-        addButton.setOnAction(event -> addTeacher());
-
-        updateButton.setOnAction(event -> updateTeacher());
 
         searchTeacherField.textProperty().addListener((observable, oldValue, newValue) -> filterTeachers(newValue));
     }
