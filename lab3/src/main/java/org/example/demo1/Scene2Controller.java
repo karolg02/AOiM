@@ -82,11 +82,11 @@ public class Scene2Controller {
     }
     private void populateForm(Teacher teacher) {
         selectedTeacher = teacher;
-        firstNameField.setText(teacher.imie);
-        lastNameField.setText(teacher.nazwisko);
-        conditionField.setValue(teacher.StanNauczyciela.name());
-        birthYearField.setText(String.valueOf(teacher.rokUrodzenia));
-        salaryField.setText(String.valueOf(teacher.wynagrodzenie));
+        firstNameField.setText(teacher.getImie());
+        lastNameField.setText(teacher.getNazwisko());
+        conditionField.setValue(teacher.getTeacherCondition().name());
+        birthYearField.setText(String.valueOf(teacher.getRokUrodzenia()));
+        salaryField.setText(String.valueOf(teacher.getWynagrodzenie()));
     }
 
     private void addTeacher() {
@@ -122,7 +122,7 @@ public class Scene2Controller {
 
     private Teacher findTeacher(String firstName, String lastName, int birthYear) {
         for (Teacher teacher : group.teachers) {
-            if (teacher.imie.equals(firstName) && teacher.nazwisko.equals(lastName) && teacher.rokUrodzenia == birthYear) {
+            if (teacher.getImie().equals(firstName) && teacher.getNazwisko().equals(lastName) && teacher.getRokUrodzenia() == birthYear) {
                 return teacher;
             }
         }
@@ -133,7 +133,7 @@ public class Scene2Controller {
         ObservableList<Teacher> filteredTeachers = FXCollections.observableArrayList();
 
         for (Teacher teacher : group.teachers) {
-            if (teacher.imie.toLowerCase().contains(searchText.toLowerCase())) {
+            if (teacher.getImie().toLowerCase().contains(searchText.toLowerCase())) {
                 filteredTeachers.add(teacher);
             }
         }
@@ -144,13 +144,13 @@ public class Scene2Controller {
 
     private void updateTeacher() {
         if (selectedTeacher != null) {
-            selectedTeacher.imie = firstNameField.getText();
-            selectedTeacher.nazwisko = lastNameField.getText();
-            selectedTeacher.StanNauczyciela = TeacherCondition.valueOf(conditionField.getSelectionModel().getSelectedItem().toUpperCase());
+            selectedTeacher.setImie(firstNameField.getText());
+            selectedTeacher.setNazwisko(lastNameField.getText());
+            selectedTeacher.setTeacherCondition(TeacherCondition.valueOf(conditionField.getSelectionModel().getSelectedItem().toUpperCase()));
 
             try {
-                selectedTeacher.rokUrodzenia = Integer.parseInt(birthYearField.getText());
-                selectedTeacher.wynagrodzenie = Double.parseDouble(salaryField.getText());
+                selectedTeacher.setRokUrodzenia(Integer.parseInt(birthYearField.getText()));
+                selectedTeacher.setWynagrodzenie(Double.parseDouble(salaryField.getText()));
             } catch (NumberFormatException e) {
                 showError("Niepoprawne dane liczbowe.");
                 return;
@@ -215,11 +215,11 @@ public class Scene2Controller {
 
         conditionField.getSelectionModel().selectFirst();
 
-        teacherFirstName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().imie));
-        teacherLastName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().nazwisko));
-        teacherCondition.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().StanNauczyciela.name()));
-        teacherBirthYear.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().rokUrodzenia).asObject());
-        teacherSalary.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().wynagrodzenie).asObject());
+        teacherFirstName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getImie()));
+        teacherLastName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNazwisko()));
+        teacherCondition.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTeacherCondition().name()));
+        teacherBirthYear.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRokUrodzenia()).asObject());
+        teacherSalary.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getWynagrodzenie()).asObject());
 
         addButton.setOnAction(event -> addTeacher());
 

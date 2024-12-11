@@ -5,8 +5,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Teacher")
-public class Teacher implements Comparable<Teacher> {
+@Table(name = "person")
+public class EntityPerson {
+
     @Id
     private int id;
 
@@ -20,13 +21,20 @@ public class Teacher implements Comparable<Teacher> {
 
     private double wynagrodzenie;
 
-    public Teacher(String imie, String nazwisko, TeacherCondition stanNauczyciela, Integer rokUrodzenia, double wynagrodzenie) {
+    // Konstruktor bezargumentowy (wymagany przez JPA)
+    public EntityPerson() {}
+
+    // Konstruktor z argumentami
+    public EntityPerson(int id, String imie, String nazwisko, TeacherCondition teacherCondition, Integer rokUrodzenia, double wynagrodzenie) {
+        this.id = id;
         this.imie = imie;
         this.nazwisko = nazwisko;
-        this.teacherCondition = stanNauczyciela;
+        this.teacherCondition = teacherCondition;
         this.rokUrodzenia = rokUrodzenia;
         this.wynagrodzenie = wynagrodzenie;
     }
+
+    // Gettery i Settery
 
     public int getId() {
         return id;
@@ -74,10 +82,5 @@ public class Teacher implements Comparable<Teacher> {
 
     public void setWynagrodzenie(double wynagrodzenie) {
         this.wynagrodzenie = wynagrodzenie;
-    }
-
-    @Override
-    public int compareTo(Teacher other) {
-        return this.nazwisko.compareTo(other.nazwisko);
     }
 }

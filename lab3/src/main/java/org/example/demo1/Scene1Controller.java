@@ -95,7 +95,7 @@ public class Scene1Controller implements Initializable {
 
     private void deleteGroup(ClassTeacher selectedGroup, ObservableList<ClassTeacher> data) {
         if (selectedGroup != null) {
-            classContainer.teacherGroups.remove(selectedGroup.groupName);
+            classContainer.teacherGroups.remove(selectedGroup.getGroupName());
 
             data.remove(selectedGroup);
 
@@ -121,11 +121,14 @@ public class Scene1Controller implements Initializable {
             }
             groupTab.refresh();
             searchField.clear();
+            filterTable("", data);
         });
 
         deleteGroupButton.setOnAction(event -> {
             ClassTeacher selectedGroup = groupTab.getSelectionModel().getSelectedItem();
             deleteGroup(selectedGroup, data);
+            searchField.clear();
+            filterTable("", data);
         });
 
         groupTab.setOnMouseClicked(event -> {
@@ -146,7 +149,7 @@ public class Scene1Controller implements Initializable {
             filteredData.addAll(data);
         } else {
             for (ClassTeacher classTeacher : data) {
-                if (classTeacher.groupName.toLowerCase().contains(searchText.toLowerCase())) {
+                if (classTeacher.getGroupName().toLowerCase().contains(searchText.toLowerCase())) {
                     filteredData.add(classTeacher);
                 }
             }

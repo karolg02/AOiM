@@ -1,13 +1,19 @@
 package org.example.demo1;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Entity
+@Table(name = "classTeacher")
 public class ClassTeacher{
-    public String groupName;
-    public List<Teacher> teachers;
+    @Id
+    private long id;
+    private String groupName;
+    private List<Teacher> teachers;
     private final int capacity;
 
     public ClassTeacher(String groupName, int capacity) {
@@ -15,23 +21,33 @@ public class ClassTeacher{
         this.capacity = capacity;
         this.teachers = new ArrayList<>(capacity);
     }
+    
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public List<Teacher> getTeachers() {
+        return teachers;
+    }
+
+    public void setTeachers(List<Teacher> teachers) {
+        this.teachers = teachers;
+    }
 
     public SimpleStringProperty nameProperty(){
         return new SimpleStringProperty(groupName);
-    }
-
-    public void addTeacher(Teacher teacher) {
-        for (Teacher t : teachers) {
-            if (t.imie.equals(teacher.imie) && t.nazwisko.equals(teacher.nazwisko)) {
-                return;
-            }
-        }
-
-        if (teachers.size() >= capacity) {
-            return;
-        }
-
-        teachers.add(teacher);
     }
 
     public double getFilledPercentage() {
