@@ -8,10 +8,10 @@ public class Rate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Klucz główny
+    private Long id;
 
     @Column(nullable = false)
-    private int value; // Wartość oceny (0-6)
+    private int value;
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
@@ -21,12 +21,8 @@ public class Rate {
     private LocalDate date;
 
     @Column(nullable = false, length = 500)
-    private static String comment; // Komentarz (opcjonalny, ale nie null)
+    private String comment;
 
-    // Gettery i settery
-    public Long getId() {
-        return id;
-    }
 
     public void setId(Long id) {
         this.id = id;
@@ -43,24 +39,16 @@ public class Rate {
         this.value = value;
     }
 
-    public ClassTeacher getGroup() {
-        return group;
-    }
-
     public void setGroup(ClassTeacher group) {
         this.group = group;
-    }
-
-    public LocalDate getDate() {
-        return date;
     }
 
     public void setDate(LocalDate date) {
         this.date = date;
     }
 
-    public static String getComment() {
-        return comment;
+    public String getComment() {
+        return this.comment;
     }
 
     public void setComment(String comment) {

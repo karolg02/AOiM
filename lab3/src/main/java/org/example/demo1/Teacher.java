@@ -6,11 +6,11 @@ import jakarta.persistence.*;
 @Table(name = "Teacher")
 public class Teacher implements Comparable<Teacher> {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Określamy, że id będzie auto-generowane
-    @Column(name = "id")  // Nazwa kolumny w tabeli
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    private String imie;  // Pole 'imie' zamiast 'name'
+    private String imie;
 
     private String nazwisko;
 

@@ -3,19 +3,26 @@ package org.example.demo1;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +33,7 @@ public class Scene2Controller {
     private Stage stage;
     private Teacher selectedTeacher;
     private ObservableList<Teacher> teacherList;
-    private int[] tab = {1,2,3,4,5,6};
+    private ObservableList<Rate> rateList;
 
     @FXML
     private TextField firstNameField;
@@ -39,11 +46,9 @@ public class Scene2Controller {
     @FXML
     private TextField salaryField;
     @FXML
-    private Button addButton;
-    @FXML
-    private Button updateButton;
-    @FXML
     private TableView<Teacher> teacherTable;
+    @FXML
+    private TableView<Rate> commentTable;
     @FXML
     private TableColumn<Teacher, String> teacherFirstName;
     @FXML
@@ -63,12 +68,12 @@ public class Scene2Controller {
     @FXML
     private TextField commentTextArea;
     @FXML
-    private TableColumn<Teacher, String> komentarz;
+    private TableColumn<Rate, String> komentarz;
     @FXML
-    private TableColumn<Teacher, Integer> ocena;
+    private TableColumn<Rate, Integer> ocena;
 
     private ClassTeacher group;
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public Scene2Controller() {
         sessionFactory = new Configuration().configure().buildSessionFactory();
@@ -123,11 +128,6 @@ public class Scene2Controller {
 
     @FXML
     private void addTeacher() {
-        /*if (group.getFilledPercentage() >= 100) {
-            showAlert("Grupa jest pełna, nie można dodać więcej nauczycieli.");
-            return;
-        }*/
-
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
         String condition = conditionField.getSelectionModel().getSelectedItem();
@@ -142,13 +142,30 @@ public class Scene2Controller {
             return;
         }
 
-        Teacher newTeacher = new Teacher(firstName, lastName, TeacherCondition.valueOf(condition.toUpperCase()), birthYear, salary);
-        newTeacher.setClassTeacher(group);
         try (Session session = sessionFactory.openSession()) {
+            // Sprawdzenie, czy nauczyciel o takim imieniu i nazwisku już istnieje
+            Teacher existingTeacher = session.createQuery(
+                            "FROM Teacher WHERE imie = :firstName AND nazwisko = :lastName", Teacher.class)
+                    .setParameter("firstName", firstName)
+                    .setParameter("lastName", lastName)
+                    .uniqueResult();
+
+            if (existingTeacher != null) {
+                showError("Nauczyciel o podanym imieniu i nazwisku już istnieje.");
+                return;
+            }
+
+            // Dodanie nowego nauczyciela
             Transaction transaction = session.beginTransaction();
+            Teacher newTeacher = new Teacher(firstName, lastName, TeacherCondition.valueOf(condition.toUpperCase()), birthYear, salary);
+            newTeacher.setClassTeacher(group);
+
             session.save(newTeacher);
             transaction.commit();
+
             teacherList.add(newTeacher);
+        } catch (Exception e) {
+            System.err.println("Błąd podczas dodawania nauczyciela: " + e.getMessage());
         }
 
         clearForm();
@@ -262,8 +279,7 @@ public class Scene2Controller {
     }
     @FXML
     private void addRate() {
-        // Pobranie danych z formularza
-        Integer ocena = (Integer) chooseOcena.getValue();
+        Integer ocena = chooseOcena.getValue();
         String comment = commentTextArea.getText();
 
         if (ocena == null || comment == null || comment.trim().isEmpty()) {
@@ -271,22 +287,23 @@ public class Scene2Controller {
             return;
         }
 
-        // Tworzenie nowej oceny
         Rate rate = new Rate();
         rate.setValue(ocena);
         rate.setComment(comment);
         rate.setDate(LocalDate.now());
 
-        // Assuming 'group' is not null and properly initialized
-        rate.setGroup(group);  // Ensure 'someGroup' is a valid, non-null reference to the required group object
+        rate.setGroup(group);
 
-        try (Session session = Connector.getInstance().getSessionFactory().openSession()) {
+        try (Session session = Connector.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 
             try {
-                // Zapis do bazy danych
                 session.save(rate);
                 transaction.commit();
+                if (rateList != null) {
+                    rateList.add(rate);
+                    commentTable.refresh();
+                }
                 System.out.println("Ocena została dodana!");
             } catch (Exception e) {
                 transaction.rollback();
@@ -297,10 +314,75 @@ public class Scene2Controller {
         }
     }
 
+    void loadRates() {
+        if (group == null) {
+            System.out.println("Group is not set. Skipping loading rates.");
+            return;
+        }
+
+        try (Session session = sessionFactory.openSession()) {
+            Query<Rate> query = session.createQuery("from Rate where group.id = :groupId", Rate.class);
+            query.setParameter("groupId", group.getId());
+
+            rateList = FXCollections.observableArrayList(query.list());
+
+            ocena.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Rate, Integer>, ObservableValue<Integer>>() {
+                public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Rate, Integer> param) {
+                    return new SimpleIntegerProperty(param.getValue().getValue()).asObject();
+                }
+            });
+
+            komentarz.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Rate, String>, ObservableValue<String>>() {
+                public ObservableValue<String> call(TableColumn.CellDataFeatures<Rate, String> param) {
+                    return new SimpleStringProperty(param.getValue().getComment());
+                }
+            });
+            commentTable.setItems(rateList);
+        }
+    }
+    @FXML
+    public void exportToCsv() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null) {
+            try (Session session = sessionFactory.openSession()) {
+                String hql = "FROM Teacher";
+                List<Teacher> teachers = session.createQuery(hql, Teacher.class).list();
+
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                    writer.write("First Name,Last Name,Condition,Birth Year,Salary");
+                    writer.newLine();
+
+                    for (Teacher teacher : teachers) {
+                        String line = String.format("%s,%s,%s,%d,%f",
+                                teacher.getImie(),
+                                teacher.getNazwisko(),
+                                teacher.getTeacherCondition().name(),
+                                teacher.getRokUrodzenia(),
+                                teacher.getWynagrodzenie());
+                        writer.write(line);
+                        writer.newLine();
+                    }
+
+                    System.out.println("Data has been exported to " + file.getPath());
+                } catch (IOException e) {
+                    System.err.println("Error writing to CSV: " + e.getMessage());
+                }
+            } catch (Exception e) {
+                System.err.println("Error querying database for export: " + e.getMessage());
+            }
+        } else {
+            System.out.println("File save canceled by user.");
+        }
+    }
+
 
     @FXML
     public void initialize() {
         loadTeachersFromDatabase();
+        loadRates();
         teacherList = FXCollections.observableArrayList();
 
         conditionField.setItems(FXCollections.observableArrayList(
@@ -318,10 +400,6 @@ public class Scene2Controller {
         teacherCondition.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTeacherCondition().name()));
         teacherBirthYear.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRokUrodzenia()).asObject());
         teacherSalary.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getWynagrodzenie()).asObject());
-
-        /*komentarz.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getComment())); // Replace with actual field from Teacher or related model
-        ocena.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRateValue()).asObject()); // Replace with actual field from Teacher or related model*/
-
 
         searchTeacherField.textProperty().addListener((observable, oldValue, newValue) -> filterTeachers(newValue));
         teacherTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {

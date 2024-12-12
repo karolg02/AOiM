@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import java.awt.desktop.ScreenSleepEvent;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -62,6 +62,7 @@ public class Scene1Controller implements Initializable {
 
             scene2Controller.setStageAndScene1(currentStage, groupTab.getScene());
             scene2Controller.loadTeachersFromDatabase();
+            scene2Controller.loadRates();
             currentStage.setScene(scene2);
             currentStage.show();
         } catch (IOException e) {
@@ -80,7 +81,6 @@ public class Scene1Controller implements Initializable {
     private void addNewGroup(String groupName, ObservableList<ClassTeacher> data) {
         try (Session session = Connector.getInstance().getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-
             ClassTeacher existingGroup = session.createQuery(
                             "FROM ClassTeacher WHERE groupName = :groupName", ClassTeacher.class)
                     .setParameter("groupName", groupName)
@@ -89,17 +89,13 @@ public class Scene1Controller implements Initializable {
             if (existingGroup == null) {
                 ClassTeacher newGroup = new ClassTeacher();
                 newGroup.setGroupName(groupName);
-                newGroup.setCapacity(10); // Przykładowa pojemność
-                //newGroup.setFilledPercentage(0.0); // Przykładowo ustawiony procent
+                newGroup.setCapacity(10);
 
-                // Zapis do bazy danych
                 session.save(newGroup);
                 transaction.commit();
 
-                // Dodanie nowego elementu do obserwowalnej listy
                 data.add(newGroup);
 
-                // Czyszczenie pola tekstowego
                 addGroupField.clear();
             } else {
                 showAlert();
@@ -110,7 +106,7 @@ public class Scene1Controller implements Initializable {
     }
 
     private void deleteGroup(ClassTeacher selectedGroup, ObservableList<ClassTeacher> data) {
-        try (Session session = Connector.getInstance().getSessionFactory().openSession()) {
+        try (Session session = Connector.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 
             if (selectedGroup != null) {

@@ -7,32 +7,36 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Light.Distant?>
+<?import javafx.scene.effect.Lighting?>
+<?import javafx.scene.effect.Shadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="693.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo1.Scene2Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="693.0" prefWidth="1177.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo1.Scene2Controller">
    <children>
-      <TableView layoutX="895.0" layoutY="6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="498.0" prefWidth="298.0">
+      <TableView fx:id="commentTable" layoutX="872.0" layoutY="6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="498.0" prefWidth="298.0">
         <columns>
-          <TableColumn fx:id="opinia" prefWidth="209.0" text="Opinia" />
-          <TableColumn fx:id="ocena" minWidth="0.0" prefWidth="88.0" text="Ocena" />
+          <TableColumn fx:id="komentarz" prefWidth="204.0" text="Komentarz" />
+          <TableColumn fx:id="ocena" minWidth="0.0" prefWidth="91.0" text="Ocena" />
         </columns>
       </TableView>
       <TableView fx:id="teacherTable" layoutX="7.0" layoutY="6.0" maxWidth="-Infinity" minWidth="600.0" prefHeight="498.0" prefWidth="857.0">
          <columns>
-            <TableColumn fx:id="teacherFirstName" prefWidth="190.0" text="Imię" />
-            <TableColumn fx:id="teacherLastName" prefWidth="270.0" text="Nazwisko" />
+            <TableColumn fx:id="teacherFirstName" prefWidth="203.0" text="Imię" />
+            <TableColumn fx:id="teacherLastName" prefWidth="257.0" text="Nazwisko" />
             <TableColumn fx:id="teacherCondition" prefWidth="132.0" text="Stan" />
             <TableColumn fx:id="teacherBirthYear" prefWidth="134.0" text="Rok urodzenia" />
             <TableColumn fx:id="teacherSalary" prefWidth="128.0" text="Wynagrodzenie" />
          </columns>
       </TableView>
-      <GridPane hgap="10" layoutY="504.0" prefHeight="174.0" prefWidth="1200.0" vgap="10">
-         <Label text="Imię:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+      <GridPane hgap="10" layoutY="504.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="174.0" prefWidth="1200.0" vgap="10">
+         <Label prefHeight="17.0" prefWidth="47.0" text="Imię:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
          <TextField fx:id="firstNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
    
             <Label text="Nazwisko:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
@@ -46,22 +50,91 @@
    
             <Label text="Pensja:" GridPane.rowIndex="4" />
          <TextField fx:id="salaryField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-         <Button fx:id="addButton" onAction="#addTeacher" prefHeight="25.0" prefWidth="80.0" text="Dodaj" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-         <Button fx:id="updateButton" onAction="#updateTeacher" prefHeight="25.0" prefWidth="80.0" text="Zatwierdź" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-         <Button mnemonicParsing="false" onAction="#deleteSelectedTeacher" prefHeight="25.0" prefWidth="80.0" text="Usuń" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+         <Button fx:id="addButton" onAction="#addTeacher" prefHeight="25.0" prefWidth="80.0" text="Dodaj" GridPane.columnIndex="2" GridPane.rowIndex="4">
+            <effect>
+               <Lighting>
+                  <bumpInput>
+                     <Shadow />
+                  </bumpInput>
+                  <light>
+                     <Light.Distant>
+                        <color>
+                           <Color red="0.5176470875740051" green="0.9490196108818054" blue="0.5372549295425415" />
+                        </color>
+                     </Light.Distant>
+                  </light>
+               </Lighting>
+            </effect></Button>
+         <Button fx:id="updateButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#updateTeacher" prefHeight="25.0" prefWidth="81.0" text="Zatwierdź" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <effect>
+               <Lighting>
+                  <bumpInput>
+                     <Shadow />
+                  </bumpInput>
+                  <light>
+                     <Light.Distant>
+                        <color>
+                           <Color red="0.5215686559677124" green="0.800000011920929" blue="1.0" />
+                        </color>
+                     </Light.Distant>
+                  </light>
+               </Lighting>
+            </effect></Button>
+         <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#deleteSelectedTeacher" prefHeight="25.0" prefWidth="81.0" text="Usuń" GridPane.columnIndex="2" GridPane.rowIndex="2">
+            <effect>
+               <Lighting bumpInput="$null">
+                  <light>
+                     <Light.Distant>
+                        <color>
+                           <Color red="1.0" green="0.41960784792900085" blue="0.3294117748737335" />
+                        </color>
+                     </Light.Distant>
+                  </light>
+               </Lighting>
+            </effect></Button>
          <TextField fx:id="searchTeacherField" GridPane.columnIndex="36" />
          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Wyszukaj nauczyciela" GridPane.columnIndex="34" />
-         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dodaj komentarz:" GridPane.columnIndex="44" />
-         <TextField fx:id="commentTextArea" GridPane.columnIndex="47" />
-         <ComboBox fx:id="chooseOcena" prefWidth="150.0" GridPane.columnIndex="47" GridPane.rowIndex="1" />
-         <Button fx:id="addCommentButton" mnemonicParsing="false" onAction="#addRate" prefHeight="25.0" prefWidth="139.0" text="Zatwierdź opinie" GridPane.columnIndex="47" GridPane.rowIndex="2" />
-         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ocena" GridPane.columnIndex="44" GridPane.rowIndex="1" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dodaj komentarz:" GridPane.columnIndex="45" />
+         <TextField fx:id="commentTextArea" GridPane.columnIndex="48" />
+         <ComboBox fx:id="chooseOcena" prefWidth="150.0" GridPane.columnIndex="48" GridPane.rowIndex="1" />
+         <Button mnemonicParsing="false" onAction="#addRate" prefHeight="25.0" prefWidth="139.0" text="Dodaj opinie" GridPane.columnIndex="48" GridPane.rowIndex="2">
+            <effect>
+               <Lighting>
+                  <bumpInput>
+                     <Shadow />
+                  </bumpInput>
+                  <light>
+                     <Light.Distant>
+                        <color>
+                           <Color red="0.5176470875740051" green="0.9490196108818054" blue="0.5372549295425415" />
+                        </color>
+                     </Light.Distant>
+                  </light>
+               </Lighting>
+            </effect></Button>
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ocena:" wrappingWidth="93.76171875" GridPane.columnIndex="45" GridPane.rowIndex="1" />
+         <Button mnemonicParsing="false" onAction="#exportToCsv" prefHeight="25.0" prefWidth="127.0" text="Eksportuj do csv" GridPane.columnIndex="48" GridPane.rowIndex="4">
+            <effect>
+               <Lighting>
+                  <bumpInput>
+                     <Shadow />
+                  </bumpInput>
+                  <light>
+                     <Light.Distant>
+                        <color>
+                           <Color red="0.5215686559677124" green="0.800000011920929" blue="1.0" />
+                        </color>
+                     </Light.Distant>
+                  </light>
+               </Lighting>
+            </effect>
+         </Button>
          <columnConstraints>
+            <ColumnConstraints minWidth="-Infinity" />
             <ColumnConstraints />
-            <ColumnConstraints />
-            <ColumnConstraints />
-            <ColumnConstraints />
-            <ColumnConstraints />
+            <ColumnConstraints maxWidth="80.0" minWidth="80.0" prefWidth="55.0" />
+            <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
+            <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
             <ColumnConstraints />
             <ColumnConstraints />
             <ColumnConstraints />
@@ -73,6 +146,7 @@
             <ColumnConstraints />
             <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
             <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
+            <ColumnConstraints />
             <ColumnConstraints />
             <ColumnConstraints />
             <ColumnConstraints />
