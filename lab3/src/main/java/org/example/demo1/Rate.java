@@ -13,14 +13,15 @@ public class Rate {
     @Column(nullable = false)
     private int value; // Wartość oceny (0-6)
 
-    @JoinColumn(name = "group_id", nullable = false) // Kolumna dla identyfikatora grupy
-    private String group; // Grupa, dla której wystawiono ocenę
+    @ManyToOne
+    @JoinColumn(name = "group_id", nullable = false)
+    private ClassTeacher group;
 
     @Column(nullable = false)
-    private LocalDate date; // Data wystawienia oceny
+    private LocalDate date;
 
     @Column(nullable = false, length = 500)
-    private String comment; // Komentarz (opcjonalny, ale nie null)
+    private static String comment; // Komentarz (opcjonalny, ale nie null)
 
     // Gettery i settery
     public Long getId() {
@@ -42,11 +43,11 @@ public class Rate {
         this.value = value;
     }
 
-    public String getGroup() {
+    public ClassTeacher getGroup() {
         return group;
     }
 
-    public void setGroup(String group) {
+    public void setGroup(ClassTeacher group) {
         this.group = group;
     }
 
@@ -58,7 +59,7 @@ public class Rate {
         this.date = date;
     }
 
-    public String getComment() {
+    public static String getComment() {
         return comment;
     }
 

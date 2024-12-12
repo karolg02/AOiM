@@ -16,6 +16,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +26,7 @@ public class Scene2Controller {
     private Stage stage;
     private Teacher selectedTeacher;
     private ObservableList<Teacher> teacherList;
+    private int[] tab = {1,2,3,4,5,6};
 
     @FXML
     private TextField firstNameField;
@@ -54,6 +56,16 @@ public class Scene2Controller {
     private TableColumn<Teacher, Double> teacherSalary;
     @FXML
     private TextField searchTeacherField;
+    @FXML
+    private Button addCommentButton;
+    @FXML
+    private ComboBox<Integer> chooseOcena;
+    @FXML
+    private TextField commentTextArea;
+    @FXML
+    private TableColumn<Teacher, String> komentarz;
+    @FXML
+    private TableColumn<Teacher, Integer> ocena;
 
     private ClassTeacher group;
     private SessionFactory sessionFactory;
@@ -111,10 +123,10 @@ public class Scene2Controller {
 
     @FXML
     private void addTeacher() {
-        if (group.getFilledPercentage() >= 100) {
+        /*if (group.getFilledPercentage() >= 100) {
             showAlert("Grupa jest pełna, nie można dodać więcej nauczycieli.");
             return;
-        }
+        }*/
 
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
@@ -140,15 +152,6 @@ public class Scene2Controller {
         }
 
         clearForm();
-    }
-
-    private Teacher findTeacher(String firstName, String lastName, int birthYear) {
-        for (Teacher teacher : teacherList) {
-            if (teacher.getImie().equals(firstName) && teacher.getNazwisko().equals(lastName) && teacher.getRokUrodzenia() == birthYear) {
-                return teacher;
-            }
-        }
-        return null;
     }
 
     private void filterTeachers(String searchText) {
@@ -257,6 +260,43 @@ public class Scene2Controller {
             e.printStackTrace();
         }
     }
+    @FXML
+    private void addRate() {
+        // Pobranie danych z formularza
+        Integer ocena = (Integer) chooseOcena.getValue();
+        String comment = commentTextArea.getText();
+
+        if (ocena == null || comment == null || comment.trim().isEmpty()) {
+            System.out.println("Wszystkie pola muszą być wypełnione!");
+            return;
+        }
+
+        // Tworzenie nowej oceny
+        Rate rate = new Rate();
+        rate.setValue(ocena);
+        rate.setComment(comment);
+        rate.setDate(LocalDate.now());
+
+        // Assuming 'group' is not null and properly initialized
+        rate.setGroup(group);  // Ensure 'someGroup' is a valid, non-null reference to the required group object
+
+        try (Session session = Connector.getInstance().getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            try {
+                // Zapis do bazy danych
+                session.save(rate);
+                transaction.commit();
+                System.out.println("Ocena została dodana!");
+            } catch (Exception e) {
+                transaction.rollback();
+                System.err.println("Błąd podczas dodawania oceny: " + e.getMessage());
+            }
+        } catch (Exception e) {
+            System.err.println("Błąd z sesją Hibernate: " + e.getMessage());
+        }
+    }
+
 
     @FXML
     public void initialize() {
@@ -269,12 +309,19 @@ public class Scene2Controller {
                 TeacherCondition.CHORY.name(),
                 TeacherCondition.NIEOBECNY.name()
         ));
+        chooseOcena.setItems(FXCollections.observableArrayList(
+                1,2,3,4,5,6
+        ));
 
         teacherFirstName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getImie()));
         teacherLastName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNazwisko()));
         teacherCondition.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTeacherCondition().name()));
         teacherBirthYear.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRokUrodzenia()).asObject());
         teacherSalary.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getWynagrodzenie()).asObject());
+
+        /*komentarz.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getComment())); // Replace with actual field from Teacher or related model
+        ocena.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRateValue()).asObject()); // Replace with actual field from Teacher or related model*/
+
 
         searchTeacherField.textProperty().addListener((observable, oldValue, newValue) -> filterTeachers(newValue));
         teacherTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {

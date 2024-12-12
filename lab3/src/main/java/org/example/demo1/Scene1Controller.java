@@ -87,7 +87,6 @@ public class Scene1Controller implements Initializable {
                     .uniqueResult();
 
             if (existingGroup == null) {
-                // Tworzenie nowej grupy
                 ClassTeacher newGroup = new ClassTeacher();
                 newGroup.setGroupName(groupName);
                 newGroup.setCapacity(10); // Przykładowa pojemność

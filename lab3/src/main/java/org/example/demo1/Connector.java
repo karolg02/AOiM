@@ -1,21 +1,17 @@
 package org.example.demo1;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 public class Connector {
-    private static Connector instance;
     private static SessionFactory sessionFactory;
 
     Connector() {
         try {
-            // Inicjalizacja fabryki sesji Hibernate z pliku konfiguracyjnego
             sessionFactory = new Configuration()
-                    .configure("hibernate.cfg.xml") // Plik konfiguracyjny Hibernate
+                    .configure("hibernate.cfg.xml")
                     .addAnnotatedClass(Teacher.class)
-                    .addAnnotatedClass(ClassTeacher.class) // Dodanie encji
+                    .addAnnotatedClass(ClassTeacher.class)
                     .addAnnotatedClass(ClassContainer.class)
                     .addAnnotatedClass(Rate.class)
                     .buildSessionFactory();
@@ -25,22 +21,15 @@ public class Connector {
         }
     }
 
+    private static final class InstanceHolder {
+        private static final Connector instance = new Connector();
+    }
+
     public static Connector getInstance() {
-        if (instance == null) {
-            synchronized (Connector.class) {
-                if (instance == null) {
-                    instance = new Connector();
-                }
-            }
-        }
-        return instance;
+        return InstanceHolder.instance;
     }
 
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
-    }
-
-    public void shutdown() {
-        sessionFactory.close();
     }
 }

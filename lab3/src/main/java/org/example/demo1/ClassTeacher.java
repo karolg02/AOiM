@@ -24,21 +24,10 @@ public class ClassTeacher {
     @JoinColumn(name = "class_teacher_id")
     private List<Teacher> teacherArrayList = new ArrayList<>();
 
-    public ClassTeacher() {
-    }
+    public ClassTeacher() {}
 
-    public ClassTeacher(String groupName, int capacity) {
-        this.groupName = groupName;
-        this.capacity = capacity;
-    }
-
-    // Gettery i settery
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getGroupName() {
@@ -58,7 +47,7 @@ public class ClassTeacher {
     }
 
     public double getFilledPercentage() {
-        return capacity * 100.0 / capacity;
+        return teacherArrayList.size() * 100.0 / capacity;
     }
 
     public ObservableValue<String> nameProperty() {
