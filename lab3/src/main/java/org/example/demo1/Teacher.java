@@ -1,14 +1,14 @@
 package org.example.demo1;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Teacher")
 public class Teacher implements Comparable<Teacher> {
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Określamy, że id będzie auto-generowane
+    @Column(name = "id")  // Nazwa kolumny w tabeli
+    private Long id;
 
     private String imie;  // Pole 'imie' zamiast 'name'
 
@@ -19,6 +19,10 @@ public class Teacher implements Comparable<Teacher> {
     private Integer rokUrodzenia;
 
     private double wynagrodzenie;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "class_teacher_id")
+    private ClassTeacher classTeacher;
 
     public Teacher(String imie, String nazwisko, TeacherCondition stanNauczyciela, Integer rokUrodzenia, double wynagrodzenie) {
         this.imie = imie;
@@ -32,11 +36,11 @@ public class Teacher implements Comparable<Teacher> {
 
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -83,5 +87,12 @@ public class Teacher implements Comparable<Teacher> {
     @Override
     public int compareTo(Teacher other) {
         return this.nazwisko.compareTo(other.nazwisko);
+    }
+
+    public ClassTeacher getClassTeacher() {
+        return classTeacher;
+    }
+    public void setClassTeacher(ClassTeacher classTeacher) {
+        this.classTeacher = classTeacher;
     }
 }

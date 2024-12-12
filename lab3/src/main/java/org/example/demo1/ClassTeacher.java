@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "class_teacher")
 public class ClassTeacher {
@@ -16,6 +19,10 @@ public class ClassTeacher {
 
     @Column(name = "capacity", nullable = false)
     private int capacity;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "class_teacher_id")
+    private List<Teacher> teacherArrayList = new ArrayList<>();
 
     public ClassTeacher() {
     }
@@ -51,14 +58,10 @@ public class ClassTeacher {
     }
 
     public double getFilledPercentage() {
-        return capacity * 1.0 / capacity;
+        return capacity * 100.0 / capacity;
     }
 
     public ObservableValue<String> nameProperty() {
         return new SimpleStringProperty(groupName);
-    }
-
-    public Teacher getTeachers() {
-        return getTeachers();
     }
 }

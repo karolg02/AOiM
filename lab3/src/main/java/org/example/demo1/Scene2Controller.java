@@ -16,6 +16,10 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 public class Scene2Controller {
     private Scene scene1;
     private Stage stage;
@@ -33,9 +37,9 @@ public class Scene2Controller {
     @FXML
     private TextField salaryField;
     @FXML
-    private javafx.scene.control.Button addButton;
+    private Button addButton;
     @FXML
-    private javafx.scene.control.Button updateButton;
+    private Button updateButton;
     @FXML
     private TableView<Teacher> teacherTable;
     @FXML
@@ -81,7 +85,7 @@ public class Scene2Controller {
 
     public void setGroup(ClassTeacher group) {
         this.group = group;
-        teacherList = FXCollections.observableArrayList(group.getTeachers());
+        teacherList = FXCollections.observableArrayList();
 
         try (Session session = sessionFactory.openSession()) {
             teacherList.setAll(session.createQuery("from Teacher", Teacher.class).list());
@@ -105,6 +109,7 @@ public class Scene2Controller {
         salaryField.setText(String.valueOf(teacher.getWynagrodzenie()));
     }
 
+    @FXML
     private void addTeacher() {
         if (group.getFilledPercentage() >= 100) {
             showAlert("Grupa jest pełna, nie można dodać więcej nauczycieli.");
@@ -126,14 +131,12 @@ public class Scene2Controller {
         }
 
         Teacher newTeacher = new Teacher(firstName, lastName, TeacherCondition.valueOf(condition.toUpperCase()), birthYear, salary);
-
+        newTeacher.setClassTeacher(group);
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             session.save(newTeacher);
             transaction.commit();
-            // Add teacher to the ObservableList
             teacherList.add(newTeacher);
-            //group.getTeachers().add(newTeacher); // Ensure that the group list is updated
         }
 
         clearForm();
@@ -159,7 +162,7 @@ public class Scene2Controller {
 
         teacherTable.setItems(filteredTeachers);
     }
-
+    @FXML
     private void updateTeacher() {
         if (selectedTeacher != null) {
             selectedTeacher.setImie(firstNameField.getText());
@@ -231,16 +234,41 @@ public class Scene2Controller {
         alert.showAndWait();
     }
 
+    public void loadTeachersFromDatabase() {
+        if (group == null) {
+            System.out.println("Group is not set. Skipping loading teachers.");
+            return;
+        }
+
+        try (Session session = Connector.getSessionFactory().openSession()) {
+            List<Teacher> teachersFromDb = session.createQuery("from Teacher ", Teacher.class).list();
+            List<Teacher> finalGroup = new ArrayList<>();
+
+            for (Teacher teacher : teachersFromDb) {
+                if (Objects.equals(teacher.getClassTeacher().getId(), group.getId())) {
+                    finalGroup.add(teacher);
+                }
+            }
+
+            teacherList.setAll(finalGroup);
+            teacherTable.setItems(teacherList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     public void initialize() {
+        loadTeachersFromDatabase();
+        teacherList = FXCollections.observableArrayList();
+
         conditionField.setItems(FXCollections.observableArrayList(
                 TeacherCondition.OBECNY.name(),
                 TeacherCondition.DELEGACJA.name(),
                 TeacherCondition.CHORY.name(),
                 TeacherCondition.NIEOBECNY.name()
         ));
-
-        conditionField.getSelectionModel().selectFirst();
 
         teacherFirstName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getImie()));
         teacherLastName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNazwisko()));
@@ -249,5 +277,16 @@ public class Scene2Controller {
         teacherSalary.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getWynagrodzenie()).asObject());
 
         searchTeacherField.textProperty().addListener((observable, oldValue, newValue) -> filterTeachers(newValue));
+        teacherTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                populateForm(newValue);
+            }
+        });
+
+        teacherTable.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.DELETE) {
+                deleteSelectedTeacher();
+            }
+        });
     }
 }

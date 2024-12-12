@@ -17,6 +17,7 @@ public class Connector {
                     .addAnnotatedClass(Teacher.class)
                     .addAnnotatedClass(ClassTeacher.class) // Dodanie encji
                     .addAnnotatedClass(ClassContainer.class)
+                    .addAnnotatedClass(Rate.class)
                     .buildSessionFactory();
         } catch (Exception e) {
             System.err.println("Initial SessionFactory creation failed." + e);

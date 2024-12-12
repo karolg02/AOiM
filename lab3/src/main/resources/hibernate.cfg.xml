@@ -36,6 +36,7 @@
         <mapping class="org.example.demo1.Teacher"/>
         <mapping class="org.example.demo1.ClassTeacher"/>
         <mapping class="org.example.demo1.ClassContainer"/>
+        <mapping class="org.example.demo1.Rate"/>
 
     </session-factory>
 

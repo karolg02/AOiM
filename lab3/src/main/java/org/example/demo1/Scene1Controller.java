@@ -54,16 +54,16 @@ public class Scene1Controller implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Scene2.fxml"));
             Parent root = loader.load();
 
-            /*Scene2Controller scene2Controller = loader.getController();
-            scene2Controller.setGroup(group);*/
+            Scene2Controller scene2Controller = loader.getController();
+            scene2Controller.setGroup(group);
 
-            /*Scene scene2 = new Scene(root);
+            Scene scene2 = new Scene(root);
             Stage currentStage = (Stage) groupTab.getScene().getWindow();
 
             scene2Controller.setStageAndScene1(currentStage, groupTab.getScene());
-
+            scene2Controller.loadTeachersFromDatabase();
             currentStage.setScene(scene2);
-            currentStage.show();*/
+            currentStage.show();
         } catch (IOException e) {
             System.out.println("Error loading Scene2.fxml: " + e.getMessage());
         }
@@ -87,15 +87,21 @@ public class Scene1Controller implements Initializable {
                     .uniqueResult();
 
             if (existingGroup == null) {
-                classContainer.addClass(groupName, 10);
+                // Tworzenie nowej grupy
+                ClassTeacher newGroup = new ClassTeacher();
+                newGroup.setGroupName(groupName);
+                newGroup.setCapacity(10); // Przykładowa pojemność
+                //newGroup.setFilledPercentage(0.0); // Przykładowo ustawiony procent
 
-                //ClassTeacher newGroup = classContainer.setGroupName(groupName);
-               /* if (newGroup != null) {
-                    data.add(newGroup);
-                }*/
+                // Zapis do bazy danych
+                session.save(newGroup);
                 transaction.commit();
+
+                // Dodanie nowego elementu do obserwowalnej listy
+                data.add(newGroup);
+
+                // Czyszczenie pola tekstowego
                 addGroupField.clear();
-                groupTab.refresh();
             } else {
                 showAlert();
             }
