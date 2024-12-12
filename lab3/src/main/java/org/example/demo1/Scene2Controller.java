@@ -356,7 +356,7 @@ public class Scene2Controller {
                     writer.newLine();
 
                     for (Teacher teacher : teachers) {
-                        String line = String.format("%s,%s,%s,%d,%f",
+                        String line = String.format("%s;%s;%s;%d;%f",
                                 teacher.getImie(),
                                 teacher.getNazwisko(),
                                 teacher.getTeacherCondition().name(),
