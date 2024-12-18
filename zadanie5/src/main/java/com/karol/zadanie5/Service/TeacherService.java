@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TeacherService {
 
-    Teacher addTeacher(Teacher teacher);
+    Teacher addTeacher(Teacher teacher, Long id);
 
     List<Teacher> getTeachers();
 

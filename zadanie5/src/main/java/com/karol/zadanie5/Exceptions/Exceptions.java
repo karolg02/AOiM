@@ -7,4 +7,7 @@ public class Exceptions {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public static class ResourceNotFoundException extends RuntimeException {
     }
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public static class CannotAddResourceException extends RuntimeException {
+    }
 }

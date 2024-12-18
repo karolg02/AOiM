@@ -1,7 +1,9 @@
 package com.karol.zadanie5.Service;
 
 import com.karol.zadanie5.Exceptions.Exceptions;
+import com.karol.zadanie5.Repository.ClassTeacherRepository;
 import com.karol.zadanie5.Repository.TeacherRepository;
+import com.karol.zadanie5.model.ClassTeacher;
 import com.karol.zadanie5.model.Teacher;
 import org.springframework.stereotype.Service;
 
@@ -11,13 +13,24 @@ import java.util.List;
 public class TeacherServiceImp implements TeacherService {
 
     private final TeacherRepository teacherRepository;
+    private final ClassTeacherRepository classTeacherRepository;
 
-    public TeacherServiceImp(TeacherRepository teacherRepository) {
+    public TeacherServiceImp(TeacherRepository teacherRepository, ClassTeacherRepository classTeacherRepository) {
         this.teacherRepository = teacherRepository;
+        this.classTeacherRepository = classTeacherRepository;
     }
 
     @Override
-    public Teacher addTeacher(Teacher teacher) {
+    public Teacher addTeacher(Teacher teacher, Long classTeacherId) {
+        ClassTeacher classTeacher = classTeacherRepository.findById(Math.toIntExact(classTeacherId))
+                .orElseThrow(Exceptions.ResourceNotFoundException::new);
+
+        if(classTeacher.getFilledPercentage()+ (double) 1 /classTeacher.getCapacity()>=100){
+            throw new Exceptions.CannotAddResourceException();
+        }
+
+        teacher.setClassTeacher(classTeacher);
+
         return teacherRepository.save(teacher);
     }
 
@@ -29,6 +42,7 @@ public class TeacherServiceImp implements TeacherService {
     @Override
     public void deleteTeacher(Long id) {
         Teacher teacher = teacherRepository.findById(id).orElseThrow(Exceptions.ResourceNotFoundException::new);
+        teacher.setClassTeacher(null);
         teacherRepository.delete(teacher);
     }
 }
