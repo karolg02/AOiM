@@ -8,7 +8,6 @@ import com.karol.zadanie5.model.Rate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 
 @Service

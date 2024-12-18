@@ -1,6 +1,9 @@
 package com.karol.zadanie5.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDate;
 
@@ -10,10 +13,13 @@ public class Rate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Value is required")
+    @Positive(message = "Value must be a positive integer")
     private int value;
 
     private LocalDate date;
 
+    @NotBlank(message = "Comment is required")
     private String comment;
 
     @ManyToOne

@@ -2,6 +2,9 @@ package com.karol.zadanie5.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +16,11 @@ public class ClassTeacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "groupName is required")
     private String groupName;
 
+    @NotNull(message = "Capacity is required")
+    @Positive(message = "Capacity must be a positive integer")
     private int capacity;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

@@ -4,6 +4,7 @@ import com.karol.zadanie5.Service.TeacherService;
 import com.karol.zadanie5.model.Teacher;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class TeacherController {
     }
 
     @PostMapping
-    public Teacher addTeacher(@RequestBody Teacher teacher, @RequestParam Long id) {
+    public Teacher addTeacher(@Valid @RequestBody Teacher teacher, @RequestParam Long id) {
         return teacherService.addTeacher(teacher, id);
     }
 
