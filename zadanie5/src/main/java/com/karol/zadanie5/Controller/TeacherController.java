@@ -2,11 +2,8 @@ package com.karol.zadanie5.Controller;
 
 import com.karol.zadanie5.Service.TeacherService;
 import com.karol.zadanie5.model.Teacher;
-import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
