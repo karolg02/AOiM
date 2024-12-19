@@ -1,4 +1,4 @@
-package com.karol.zadanie5.Repository;
+package com.karol.zadanie5.repository;
 
 import com.karol.zadanie5.model.ClassTeacher;
 import com.karol.zadanie5.model.Rate;

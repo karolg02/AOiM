@@ -1,8 +1,8 @@
-package com.karol.zadanie5.Service;
+package com.karol.zadanie5.service;
 
-import com.karol.zadanie5.Exceptions.Exceptions;
-import com.karol.zadanie5.Repository.ClassTeacherRepository;
-import com.karol.zadanie5.Repository.TeacherRepository;
+import com.karol.zadanie5.exceptions.Exceptions;
+import com.karol.zadanie5.repository.ClassTeacherRepository;
+import com.karol.zadanie5.repository.TeacherRepository;
 import com.karol.zadanie5.model.ClassTeacher;
 import com.karol.zadanie5.model.Teacher;
 import org.springframework.stereotype.Service;

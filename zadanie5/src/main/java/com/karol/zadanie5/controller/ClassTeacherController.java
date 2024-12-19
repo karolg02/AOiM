@@ -1,6 +1,6 @@
-package com.karol.zadanie5.Controller;
+package com.karol.zadanie5.controller;
 
-import com.karol.zadanie5.Service.ClassTeacherService;
+import com.karol.zadanie5.service.ClassTeacherService;
 import com.karol.zadanie5.model.ClassTeacher;
 import com.karol.zadanie5.model.Teacher;
 import jakarta.validation.Valid;

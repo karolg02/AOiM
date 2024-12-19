@@ -1,4 +1,4 @@
-package com.karol.zadanie5.Service;
+package com.karol.zadanie5.service;
 
 import com.karol.zadanie5.model.Rate;
 

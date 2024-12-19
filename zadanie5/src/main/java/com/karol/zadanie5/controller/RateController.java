@@ -1,6 +1,6 @@
-package com.karol.zadanie5.Controller;
+package com.karol.zadanie5.controller;
 
-import com.karol.zadanie5.Service.RateService;
+import com.karol.zadanie5.service.RateService;
 import com.karol.zadanie5.model.Rate;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/rate")
 public class RateController {
-    private RateService rateService;
+    private final RateService rateService;
 
     public RateController(RateService rateService) {
         this.rateService = rateService;

@@ -1,4 +1,4 @@
-package com.karol.zadanie5.Repository;
+package com.karol.zadanie5.repository;
 
 import com.karol.zadanie5.model.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
