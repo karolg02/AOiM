@@ -1,5 +1,6 @@
 package com.karol.zadanie5.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ public class Rate {
     @Positive(message = "Value must be a positive integer")
     private int value;
 
+    @NotNull
     private LocalDate date;
 
     @NotBlank(message = "Comment is required")
@@ -24,6 +26,7 @@ public class Rate {
 
     @ManyToOne
     @JoinColumn(name = "class_teacher_id", nullable = false)
+    @JsonIgnore
     private ClassTeacher classTeacher;
 
     public void setId(Long id) {
@@ -41,10 +44,6 @@ public class Rate {
         this.value = value;
     }
 
-    public void setGroup(ClassTeacher classTeacher) {
-        this.classTeacher = classTeacher;
-    }
-
     public void setDate(LocalDate date) {
         this.date = date;
     }
@@ -59,5 +58,13 @@ public class Rate {
 
     public LocalDate getDate() {
         return date;
+    }
+
+    public ClassTeacher getClassTeacher() {
+        return classTeacher;
+    }
+
+    public void setClassTeacher(ClassTeacher classTeacher) {
+        this.classTeacher = classTeacher;
     }
 }

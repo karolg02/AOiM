@@ -5,10 +5,10 @@ import com.karol.zadanie5.model.TeacherCondition;
 import com.karol.zadanie5.service.TeacherService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,7 +26,7 @@ class TeacherControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private TeacherService teacherService;
 
     private Teacher teacher1;
@@ -62,7 +62,7 @@ class TeacherControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("John"))
                 .andExpect(jsonPath("$.surname").value("Doe"))
-                .andExpect(jsonPath("$.teacherCondition").value("ACTIVE"))
+                .andExpect(jsonPath("$.teacherCondition").value("OBECNY"))
                 .andExpect(jsonPath("$.yearOfBirth").value(1980))
                 .andExpect(jsonPath("$.salary").value(50000.0));
     }
@@ -100,6 +100,6 @@ class TeacherControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", "text/csv"))
                 .andExpect(header().string("Content-Disposition", "attachment; filename=teachers.csv"))
-                .andExpect(content().string("ID,NAME,SURNAME\n1,John,Doe\n2,Jane,Smith\n"));
+                .andExpect(content().string("ID,NAME,SURNAME\r\n1,John,Doe\r\n2,Jane,Smith\r\n"));
     }
 }
