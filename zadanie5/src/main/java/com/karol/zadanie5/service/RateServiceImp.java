@@ -32,7 +32,7 @@ public class RateServiceImp implements RateService {
     @Override
     public Rate addRate(Rate rate, Long id) {
         ClassTeacher classTeacher = classTeacherRepository.findById(Math.toIntExact(id)).orElseThrow(Exceptions.ResourceNotFoundException::new);
-        rate.setClassTeacher(classTeacher);
+        rate.setGroup(classTeacher);
         rate.setDate(LocalDate.now());
         return rateRepository.save(rate);
     }

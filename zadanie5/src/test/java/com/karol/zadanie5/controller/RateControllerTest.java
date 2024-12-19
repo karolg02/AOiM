@@ -40,7 +40,7 @@ class RateControllerTest {
         rate.setId(1L);
         rate.setValue(5);
         rate.setDate(LocalDate.now());
-        rate.setClassTeacher(classTeacher);
+        rate.setGroup(classTeacher);
         rate.setComment("elo");
     }
 
